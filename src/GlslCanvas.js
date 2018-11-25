@@ -92,6 +92,17 @@ void main(){
         canvas.style.backgroundColor = contextOptions.backgroundColor || 'rgba(1,1,1,0)';
 
         // Load shader
+        if (canvas.hasAttribute('data-vertex')) {
+            this.vertexString = canvas.getAttribute('data-vertex');
+        }
+        else if (canvas.hasAttribute('data-vertex-url')) {
+            let source = canvas.getAttribute('data-vertex-url');
+            xhr.get(source, (error, response, body) => {
+                this.load(this.fragmentString, body);
+            });
+        }
+
+        // Load shader
         if (canvas.hasAttribute('data-fragment')) {
             this.fragmentString = canvas.getAttribute('data-fragment');
         }
@@ -102,16 +113,6 @@ void main(){
             });
         }
 
-        // Load shader
-        if (canvas.hasAttribute('data-vertex')) {
-            this.vertexString = canvas.getAttribute('data-vertex');
-        }
-        else if (canvas.hasAttribute('data-vertex-url')) {
-            let source = canvas.getAttribute('data-vertex-url');
-            xhr.get(source, (error, response, body) => {
-                this.load(this.fragmentString, body);
-            });
-        }
 
         this.load();
 
