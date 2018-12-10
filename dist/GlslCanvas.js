@@ -1566,10 +1566,7 @@ var GlslCanvas = function () {
 
             // If Fragment shader fails load a empty one to sign the error
             if (!fragmentShader) {
-                fragmentShader = createShader(this, 'void main(){\n\tgl_FragColor = vec4(1.0);\n}', this.gl.FRAGMENT_SHADER);
-                this.isValid = false;
-            } else {
-                this.isValid = true;
+                return;
             }
 
             // Create and use program
