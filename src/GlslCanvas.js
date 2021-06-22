@@ -34,8 +34,18 @@ export default class GlslCanvas {
         contextOptions = contextOptions || {};
         options = options || {};
 
-        this.width = canvas.clientWidth;
-        this.height = canvas.clientHeight;
+        if (canvas.hasAttribute('data-fullscreen') &&
+            (canvas.getAttribute('data-fullscreen') == "1" ||
+            canvas.getAttribute('data-fullscreen') == "true" )
+        ) {
+            this.width = window.innerWidth;
+            this.height = window.innerHeight;
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        } else {
+            this.width = canvas.clientWidth;
+            this.height = canvas.clientHeight;
+        }
 
         this.canvas = canvas;
         this.gl = undefined;
@@ -45,6 +55,7 @@ export default class GlslCanvas {
         this.uniforms = {};
         this.vbo = {};
         this.isValid = false;
+        this.animationFrameRequest = undefined;
 
         this.BUFFER_COUNT = 0;
         // this.TEXTURE_COUNT = 0;
@@ -164,7 +175,7 @@ void main(){
             }
             
             sandbox.render();
-            window.requestAnimationFrame(RenderLoop);
+            sandbox.animationFrameRequest = window.requestAnimationFrame(RenderLoop);
         }
 
         // Start
@@ -174,6 +185,9 @@ void main(){
     }
 
     destroy() {
+        // Stop the animation
+        cancelAnimationFrame(this.animationFrameRequest);
+
         this.animated = false;
         this.isValid = false;
         for (let tex in this.textures) {
@@ -191,6 +205,7 @@ void main(){
             const buffer = this.buffers[key];
             this.gl.deleteProgram(buffer.program);
         }
+
         this.program = null;
         this.gl = null;
     }
